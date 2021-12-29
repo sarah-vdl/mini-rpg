@@ -1,6 +1,7 @@
 
 const canvasWidth = 800 // remember this is also in html
 const canvasHeight = 500
+const size = 50
 
 var canvas = document.getElementById("gameCanvas");
 var ctx = canvas.getContext("2d");
@@ -12,20 +13,32 @@ var keyStates = {
   right: false
 };
 
-function checkInputs(gameData) {
+function movePlayer(gameData) {
+  newXPos = gameData.player.x;
+  newYPos = gameData.player.y;
+
   if (keyStates.left) {
-    gameData.player.x -= gameData.player.speed
+    newXPos -= gameData.player.speed;
   }
   if (keyStates.right) {
-    gameData.player.x += gameData.player.speed
+    newXPos += gameData.player.speed;
   }
   if (keyStates.down) {
-    gameData.player.y += gameData.player.speed
+    newYPos += gameData.player.speed;
   }
   if (keyStates.up) {
-    gameData.player.y -= gameData.player.speed
+    newYPos -= gameData.player.speed;
   }
-  return gameData
+
+  if ((newXPos <0) || (newYPos <0) ||
+   (newXPos > canvasWidth - size) || (newYPos > canvasHeight - size)) {
+      
+    } else {
+      gameData.player.x = newXPos;
+      gameData.player.y = newYPos;
+    }
+
+  return gameData;
 }
 
 function drawSquare(x, y, size) {
@@ -36,7 +49,7 @@ function drawSquare(x, y, size) {
 function drawAll(gameData) {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   // will need to know background / animations / only visuals
-  drawSquare(gameData.player.x, gameData.player.y, 50);
+  drawSquare(gameData.player.x, gameData.player.y, size);
 }
 
 function setup() {
@@ -85,8 +98,9 @@ function setup() {
 }
 
 function gameLoop(gameData) {
+  gameData = movePlayer(gameData);
+
   //step1: check for user input
-  gameData = checkInputs(gameData)
   //step2: game logic (moving player, checking for any game states)
   //step3: draw screen
   drawAll(gameData);
